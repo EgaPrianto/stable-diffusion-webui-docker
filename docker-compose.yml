@@ -34,6 +34,10 @@ services:
   auto-cpu:
     <<: *automatic
     profiles: ["auto-cpu"]
+    build:
+      context: ./services/AUTOMATIC1111
+      dockerfile: Dockerfile.cpu
+    image: sd-auto-cpu:78
     deploy: {}
     environment:
       - CLI_ARGS=--no-half --precision full --allow-code --enable-insecure-extension-access --api

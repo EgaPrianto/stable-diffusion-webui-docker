@@ -68,12 +68,18 @@ list=(./extensions/*/install.py)
 for installscript in "${list[@]}"; do
   EXTNAME=$(echo $installscript | cut -d '/' -f 3)
   # Skip installing dependencies if extension is disabled in config
-  if $(jq -e ".disabled_extensions|any(. == \"$EXTNAME\")" config.json); then
+  if $(jq -e ".disabled_extensions|any(. == \"$EXTNAME\")" config.json 2>/dev/null); then
     echo "Skipping disabled extension ($EXTNAME)"
     continue
   fi
   PYTHONPATH=${ROOT} python "$installscript"
 done
+
+# Reinstall compatible versions after extensions to fix dependency conflicts (removed to speed up boot)
+# Extensions may install incompatible versions, but forcing reinstall on every boot is too slow
+# If you encounter version issues, uncomment below:
+# echo "Ensuring package compatibility..."
+# pip install --force-reinstall "numpy==2.0.2" "scikit-image==0.24.0" "pillow==10.4.0" "mediapipe==0.10.14" -q
 
 if [ -f "/data/config/auto/startup.sh" ]; then
   pushd ${ROOT}
