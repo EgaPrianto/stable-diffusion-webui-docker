@@ -1,7 +1,8 @@
 FROM alpine/git:2.36.2 as download
 
-COPY ./services/AUTOMATIC1111/clone.sh /clone.sh
-COPY ./repositories/stable-diffusion-stability-ai /repositories/stable-diffusion-stability-ai
+COPY clone.sh /clone.sh
+
+COPY repositories/ /repositories/
 
 RUN . /clone.sh stable-diffusion-webui-assets https://github.com/AUTOMATIC1111/stable-diffusion-webui-assets.git 6f7db241d2f8ba7457bac5ca9753331f0c266917
 
@@ -58,7 +59,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN apt-get -y install libgoogle-perftools-dev && apt-get clean
 ENV LD_PRELOAD=libtcmalloc.so
 
-COPY ./services/AUTOMATIC1111 /docker
+COPY . /docker
 
 RUN \
   # mv ${ROOT}/style.css ${ROOT}/user.css && \
